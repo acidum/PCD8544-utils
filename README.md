@@ -30,7 +30,7 @@ $ sudo bin/lcdstats
 $ sudo bin/lcdlogo  
 
 # Display text message
-$ sudo bin/lcdprint  Hello world!
+$ sudo bin/lcdprint 'Hello world!'
 
 # Turn LED backlight ON, OFF and blinking
 $ sudo   bin/lcdlights on
