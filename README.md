@@ -16,7 +16,7 @@ $ make all
 
 This will create binaries in ./bin directory.
 
-You may want to edit src/pin_setup.h file to set PIN numbers and LCD Contrast before.
+You may want to edit src/pin_setup.h file to customize PIN numbers and LCD Contrast.
 
 
 # Usage
