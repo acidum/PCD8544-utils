@@ -6,7 +6,7 @@ Download and install instructions are on http://wiringpi.com/download-and-instal
 
 # Building
 
-Simply run
+Clone repository and build
 
 ```
 $ git clone git@github.com:acidum/PCD8544-utils.git
@@ -15,6 +15,8 @@ $ make all
 ```
 
 This will create binaries in ./bin directory.
+
+You may want to edit src/pin_setup.h file to set PIN numbers and LCD Contrast before.
 
 
 # Usage
@@ -34,3 +36,4 @@ $ sudo bin/lcdprint  Hello world!
 $ sudo   bin/lcdlights on
 $ sudo   bin/lcdlights off
 $ sudo   bin/lcdlights blink
+```

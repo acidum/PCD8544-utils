@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- Name : lcdblight.c
+ Name : lcdlight.c
 
  Descriptioni : 
      Controls the backlight LED.
@@ -33,16 +33,15 @@ void sig_handler(int signo) {
   }
 }
 
-
-
 int main (int argc, char *argv[]) {
   void usage () {
     fprintf(stderr, "usage: %s [on|off|blink]\n", argv[0]);
     exit(1);
   }
 
-  if (wiringPiSetup () == -1)
+  if (wiringPiSetup () == -1) {
     exit(1);
+  }
 
   pinMode (PIN_BACKLIGHT, OUTPUT); 
 
