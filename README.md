@@ -4,17 +4,20 @@ Utilities for PCD8544 LCD (Nokia3310/5110) shield for Raspberry Pi
 This utilities are using WiringPi library.
 Download and install instructions are on http://wiringpi.com/download-and-install/
 
-= Building
+# Building
+
 Simply run
 
 ```
-make all
+$ git clone git@github.com:acidum/PCD8544-utils.git
+$ cd ./PCD8544-utils
+$ make all
 ```
 
 This will create binaries in ./bin directory.
 
 
-= Usage
+# Usage
 Compiled programs require root priveleges to set Raspberry PI GPIO ports.
 
 ```
