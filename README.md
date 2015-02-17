@@ -67,7 +67,7 @@ destroy Raspberry Pi.
 Steps to enable backlight control on a stock PCD8544 Rasberry Pi shield are
 provided below.
 
-## Part list
+## Parts list
 * Raspberry Pi PCD8544 Shield
 * Soldering iron
 * Small piece of wire
