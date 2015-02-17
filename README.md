@@ -14,9 +14,10 @@ control (see hardware modification description below) and message display.
 Provided utilities can be used in shell scripting for Raspberry PI projects
 requiring low cost message indication.
 
-Download and install instructions are on http://wiringpi.com/download-and-install/
 
 # Building
+
+Download and install WiringPi as described on http://wiringpi.com/download-and-install/
 
 Clone repository and build
 
