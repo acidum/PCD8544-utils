@@ -31,3 +31,6 @@ lcdlight: src/lcdlight.c
 
 clean:
 	rm -f obj/*.o bin/*
+
+install:
+	sudo chown root bin/*; sudo chmod +s bin/lcd*; sudo cp bin/* ~/bin

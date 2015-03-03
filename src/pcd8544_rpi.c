@@ -1,5 +1,5 @@
 /*
-=================================================================================
+================================================================================
  Name        : pcd8544_rpi.c
  Version     : 0.1
 
@@ -7,8 +7,10 @@
  PCD8544-utils revision by Kostyantyn Fomin k.fomin@gmail.com
 
  Description :
-     A simple PCD8544 LCD (Nokia3310/5110) for Raspberry Pi for displaying some system informations.
-	 Makes use of WiringPI-library of Gordon Henderson (https://projects.drogon.net/raspberry-pi/wiringpi/)
+     A simple PCD8544 LCD (Nokia3310/5110) for Raspberry Pi for displaying
+   some system informations.
+	 Makes use of WiringPI-library of Gordon Henderson 
+   (https://projects.drogon.net/raspberry-pi/wiringpi/)
 
 	 Recommended connection (http://www.raspberrypi.org/archives/384):
 	 LCD pins      Raspberry Pi
@@ -59,7 +61,7 @@ int main(int argc, char *argv[]) {
 
   // print infos
   printf("LCD PCD8544 sysinfo display\n");
-  printf("========================================\n");
+  printf("===========================\n");
   
   // check wiringPi setup
   if (wiringPiSetup() == -1) {
@@ -101,7 +103,20 @@ int main(int argc, char *argv[]) {
     char ramInfo[10]; 
     unsigned long totalRam = sys_info.freeram / 1024 / 1024;
     sprintf(ramInfo, "RAM %ld MB", totalRam);
-  
+
+    // IP info
+    FILE *fp;
+    char ipAddr[45];
+    fp = popen("/bin/hostname -I", "r");
+    if (fp == NULL) {
+      printf("Failed to run /bin/hostname -I\n" );
+      exit(1);
+    }
+    if (fgets(ipAddr, sizeof(ipAddr)-1, fp) != NULL) {
+      LCDdrawstring(0, 36, ipAddr);
+    }
+    pclose(fp);
+    
     // build screen
     LCDdrawstring(0, 0, "System stats:");
     LCDdrawline(0, 10, 83, 10, BLACK);
@@ -110,7 +125,7 @@ int main(int argc, char *argv[]) {
     LCDdrawstring(0, 28, ramInfo);
     LCDdisplay();
   
-    delay(1000);
+    delay(3000);
   }
   
   return 0;
