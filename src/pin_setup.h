@@ -44,4 +44,4 @@ Lesser General Public License for more details.
 
 // Adjust the contrast of your screen (which might be unique).
 // Normal values are 30 - 90. Default is 45.
-#define LCD_CONTRAST 45
+#define LCD_CONTRAST 75 

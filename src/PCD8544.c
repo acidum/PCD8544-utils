@@ -42,6 +42,7 @@ Lesser General Public License for more details.
 ================================================================================
  */
 #include <wiringPi.h>
+#include <time.h>
 #include "PCD8544.h"
 
 // An abs() :)
@@ -414,7 +415,7 @@ void LCDInit(uint8_t SCLK, uint8_t DIN, uint8_t DC, uint8_t CS, uint8_t RST, uin
 		digitalWrite(_cs, LOW);
 
 	digitalWrite(_rst, LOW);
-	_delay_ms(500);
+  nanosleep((struct timespec[]){{0, CLKCONST_1}}, NULL);
 	digitalWrite(_rst, HIGH);
 
 	// get into the EXTENDED mode!
@@ -834,20 +835,9 @@ void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
 			digitalWrite(dataPin, !!(val & (1 << (7 - i))));
 
 		digitalWrite(clockPin, HIGH);
-		for (j = CLKCONST_2; j > 0; j--); // clock speed, anyone? (LCD Max CLK input: 4MHz)
+		// LCD Max CLK input: 4MHz
+    nanosleep((struct timespec[]){{ 0, CLKCONST_2 }}, NULL);
 		digitalWrite(clockPin, LOW);
 	}
 }
 
-// roughly calibrated spin delay
-void _delay_ms(uint32_t t)
-{
-	uint32_t nCount = 0;
-	while (t != 0)
-	{
-		nCount = CLKCONST_1;
-		while(nCount != 0)
-			nCount--;
-		t--;
-	}
-}

@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   // show logo
   LCDshowLogo();
   
-  delay(2000);
+  delay(1500);
   
   for (;;) {
     // clear lcd
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
     LCDdrawstring(0, 28, ramInfo);
     LCDdisplay();
   
-    delay(3000);
+    delay(950);
   }
   
   return 0;
