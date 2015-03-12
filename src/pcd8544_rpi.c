@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     // uptime
     char uptimeInfo[15];
     unsigned long uptime = sys_info.uptime / 60;
-    sprintf(uptimeInfo, "Uptime %ld min.", uptime);
+    sprintf(uptimeInfo, "Up: %ld min", uptime);
 	  
     // cpu info
     char cpuInfo[10]; 
@@ -113,19 +113,20 @@ int main(int argc, char *argv[]) {
       exit(1);
     }
     if (fgets(ipAddr, sizeof(ipAddr)-1, fp) != NULL) {
-      LCDdrawstring(0, 36, ipAddr);
+      LCDdrawstring(0, 34, ipAddr);
     }
     pclose(fp);
     
     // build screen
-    LCDdrawstring(0, 0, "System stats:");
-    LCDdrawline(0, 10, 83, 10, BLACK);
-    LCDdrawstring(0, 12, uptimeInfo);
-    LCDdrawstring(0, 20, cpuInfo);
-    LCDdrawstring(0, 28, ramInfo);
+    LCDdrawstring(0, 0, "System stats");
+    LCDdrawline(0, 8, 83, 8, BLACK);
+    LCDdrawstring(0, 10, uptimeInfo);
+    LCDdrawstring(0, 18, cpuInfo);
+    LCDdrawstring(0, 26, ramInfo);
+    LCDdrawline(0, 42, 83, 42, BLACK);
     LCDdisplay();
   
-    delay(950);
+    delay(3000);
   }
   
   return 0;
