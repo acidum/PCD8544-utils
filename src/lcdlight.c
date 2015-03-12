@@ -26,11 +26,9 @@ Lesser General Public License for more details.
 #include "pin_setup.h"
 
 void sig_handler(int signo) {
-  if (signo == SIGINT) {
-    // turning lights off when exit
-    digitalWrite(PIN_BACKLIGHT, 0);
-    exit(0);
-  }
+  // turning lights off before exit
+  digitalWrite(PIN_BACKLIGHT, 0);
+  exit(0);
 }
 
 int main (int argc, char *argv[]) {
@@ -50,10 +48,11 @@ int main (int argc, char *argv[]) {
   }
 
   if (strcmp(argv[1], "blink") == 0) {
-    if (signal(SIGINT, sig_handler) == SIG_ERR) {
+    if (signal(SIGINT, sig_handler) == SIG_ERR) 
       fprintf(stderr,"\ncan't catch SIGINT\n");
-      exit(1);
-    }
+    if (signal(SIGTERM, sig_handler) == SIG_ERR) 
+      fprintf(stderr,"\ncan't catch SIGTERM\n");
+
     while(1) {
       digitalWrite (PIN_BACKLIGHT, 1);
       delay (250);

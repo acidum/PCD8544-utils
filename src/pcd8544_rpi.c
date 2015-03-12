@@ -47,25 +47,22 @@ Lesser General Public License for more details.
 #include "pin_setup.h"
 
 void sig_handler(int signo) {
-  if (signo == SIGINT) {
-    printf("\nreceived SIGINT\n");
-    LCDclear();
-    LCDdisplay();
-    exit(0);
-  }
+  // clear LCD display before exiting
+  LCDclear();
+  LCDdisplay();
+  exit(0);
 }
 
 int main(int argc, char *argv[]) {
-  if (signal(SIGINT, sig_handler) == SIG_ERR)
-    printf("\ncan't catch SIGINT\n");
+ if (signal(SIGINT, sig_handler) == SIG_ERR)
+    fprintf(stderr, "\ncan't catch SIGINT\n");
+ 
+ if (signal(SIGTERM, sig_handler) == SIG_ERR)
+    fprintf(stderr, "\ncan't catch SIGTERM\n");
 
-  // print infos
-  printf("LCD PCD8544 sysinfo display\n");
-  printf("===========================\n");
-  
   // check wiringPi setup
   if (wiringPiSetup() == -1) {
-    printf("wiringPi-Error\n");
+    fprintf(stderr, "wiringPi-Error\n");
     exit(1);
   }
   
@@ -85,22 +82,22 @@ int main(int argc, char *argv[]) {
     // get system usage / info
     struct sysinfo sys_info;
     if(sysinfo(&sys_info) != 0) {
-      fprintf(stderr,"sysinfo-Error\n");
+      fprintf(stderr, "sysinfo-Error\n");
       exit (1);
     }
     
     // uptime
     char uptimeInfo[15];
     unsigned long uptime = sys_info.uptime / 60;
-    sprintf(uptimeInfo, "Up: %ld min", uptime);
+    sprintf(uptimeInfo, "Up %ld min", uptime);
 	  
     // cpu info
-    char cpuInfo[10]; 
+    char cpuInfo[15]; 
     unsigned long avgCpuLoad = sys_info.loads[0] / 1000;
     sprintf(cpuInfo, "CPU %ld%%", avgCpuLoad);
   
     // ram info
-    char ramInfo[10]; 
+    char ramInfo[15]; 
     unsigned long totalRam = sys_info.freeram / 1024 / 1024;
     sprintf(ramInfo, "RAM %ld MB", totalRam);
 
@@ -109,7 +106,7 @@ int main(int argc, char *argv[]) {
     char ipAddr[45];
     fp = popen("/bin/hostname -I", "r");
     if (fp == NULL) {
-      printf("Failed to run /bin/hostname -I\n" );
+      fprintf(stderr, "Failed to run /bin/hostname -I\n" );
       exit(1);
     }
     if (fgets(ipAddr, sizeof(ipAddr)-1, fp) != NULL) {
