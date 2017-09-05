@@ -88,5 +88,3 @@ this could be done using dremmerl tool or a smal rasp (see pictures below).
 ![Resistor Hack](img/resistor-hack.png)
 ![Wire behind the shield](img/shield-back.png)
 
-
-

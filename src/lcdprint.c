@@ -29,8 +29,7 @@ Lesser General Public License for more details.
  
 int main (int argc, char *argv[])
 {
-  if (2  > argc)
-  {
+  if (2 > argc) {
     fprintf(stderr, "usage: %s message\n", argv[0]);
     exit(1);
   }

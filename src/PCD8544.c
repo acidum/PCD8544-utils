@@ -41,6 +41,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 ================================================================================
  */
+
 #include <wiringPi.h>
 #include <time.h>
 #include "PCD8544.h"
@@ -358,22 +359,21 @@ const uint8_t pi_logo [] = {
 // originally derived from Steve Evans/JCW's mod but cleaned up and optimized
 //#define enablePartialUpdate
 
-static void my_setpixel(uint8_t x, uint8_t y, uint8_t color)
-{
-	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
+static void my_setpixel(uint8_t x, uint8_t y, uint8_t color) {
+	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT)) {
 		return;
+  }
 	// x is which column
-	if (color)
+	if (color) {
 		pcd8544_buffer[x+ (y/8)*LCDWIDTH] |= _BV(y%8);
-	else
+  }	else {
 		pcd8544_buffer[x+ (y/8)*LCDWIDTH] &= ~_BV(y%8);
+  }
 }
 
-void LCDshowLogo()
-{
+void LCDshowLogo() {
 	uint32_t i;
-	for (i = 0; i < LCDWIDTH * LCDHEIGHT / 8; i++  )
-	{
+	for (i = 0; i < LCDWIDTH * LCDHEIGHT / 8; i++ )	{
 		pcd8544_buffer[i] = pi_logo[i];
 	}
 	LCDdisplay();
@@ -392,8 +392,7 @@ static void updateBoundingBox(uint8_t xmin, uint8_t ymin, uint8_t xmax, uint8_t 
 #endif
 }
 
-void LCDInit(uint8_t SCLK, uint8_t DIN, uint8_t DC, uint8_t CS, uint8_t RST, uint8_t contrast)
-{
+void LCDInit(uint8_t SCLK, uint8_t DIN, uint8_t DC, uint8_t CS, uint8_t RST, uint8_t contrast) {
 	_din = DIN;
 	_sclk = SCLK;
 	_dc = DC;
@@ -411,8 +410,9 @@ void LCDInit(uint8_t SCLK, uint8_t DIN, uint8_t DC, uint8_t CS, uint8_t RST, uin
 	pinMode(_cs, OUTPUT);
 
 	// toggle RST low to reset; CS low so it'll listen to us
-	if (_cs > 0)
+	if (_cs > 0) {
 		digitalWrite(_cs, LOW);
+  }
 
 	digitalWrite(_rst, LOW);
   nanosleep((struct timespec[]){{0, CLKCONST_1}}, NULL);
@@ -425,8 +425,9 @@ void LCDInit(uint8_t SCLK, uint8_t DIN, uint8_t DC, uint8_t CS, uint8_t RST, uin
 	LCDcommand(PCD8544_SETBIAS | 0x4);
 
 	// set VOP
-	if (contrast > 0x7f)
+	if (contrast > 0x7f) {
 		contrast = 0x7f;
+  }
 
 	LCDcommand( PCD8544_SETVOP | contrast); // Experimentally determined
 
@@ -438,18 +439,13 @@ void LCDInit(uint8_t SCLK, uint8_t DIN, uint8_t DC, uint8_t CS, uint8_t RST, uin
 
 	// set up a bounding box for screen updates
 	updateBoundingBox(0, 0, LCDWIDTH-1, LCDHEIGHT-1);
-
 }
 
-void LCDdrawbitmap(uint8_t x, uint8_t y,const uint8_t *bitmap, uint8_t w, uint8_t h,uint8_t color)
-{
+void LCDdrawbitmap(uint8_t x, uint8_t y, const uint8_t *bitmap, uint8_t w, uint8_t h, uint8_t color) {
 	uint8_t j,i;
-	for ( j=0; j<h; j++)
-	{
-		for ( i=0; i<w; i++ )
-		{
-			if (*(bitmap + i + (j/8)*w) & _BV(j%8))
-			{
+	for ( j=0; j<h; j++) {
+		for ( i=0; i<w; i++ ) {
+			if (*(bitmap + i + (j/8)*w) & _BV(j%8)) {
 				my_setpixel(x+i, y+j, color);
 			}
 		}
@@ -457,101 +453,85 @@ void LCDdrawbitmap(uint8_t x, uint8_t y,const uint8_t *bitmap, uint8_t w, uint8_
 	updateBoundingBox(x, y, x+w, y+h);
 }
 
-void LCDdrawstring(uint8_t x, uint8_t y, char *c)
-{
+void LCDdrawstring(uint8_t x, uint8_t y, char *c) {
 	cursor_x = x;
 	cursor_y = y;
-	while (*c)
-	{
+	while (*c) {
 		LCDwrite(*c++);
 	}
 }
 
-void LCDdrawstring_P(uint8_t x, uint8_t y, const char *str)
-{
+void LCDdrawstring_P(uint8_t x, uint8_t y, const char *str) {
 	cursor_x = x;
 	cursor_y = y;
-	while (1)
-	{
+	while (1)	{
 		char c = (*str++);
-		if (! c)
+		if (! c) {
 			return;
+    }
 		LCDwrite(c);
 	}
 }
 
-void LCDdrawchar(uint8_t x, uint8_t y, char c)
-{
-	if (y >= LCDHEIGHT) return;
-	if ((x+5) >= LCDWIDTH) return;
+void LCDdrawchar(uint8_t x, uint8_t y, char c) {
+	if (y >= LCDHEIGHT) {
+    return;
+  }
+	if ((x+5) >= LCDWIDTH) {
+    return;
+  }
 	uint8_t i,j;
-	for ( i =0; i<5; i++ )
-	{
+	for (i =0; i<5; i++) {
 		uint8_t d = *(font+(c*5)+i);
 		uint8_t j;
-		for (j = 0; j<8; j++)
-		{
-			if (d & _BV(j))
-			{
+		for (j = 0; j<8; j++)	{
+			if (d & _BV(j))	{
 				my_setpixel(x+i, y+j, textcolor);
-			}
-			else
-			{
+			}	else {
 				my_setpixel(x+i, y+j, !textcolor);
 			}
 		}
 	}
 
-	for ( j = 0; j<8; j++)
-	{
+	for (j = 0; j<8; j++)	{
 		my_setpixel(x+5, y+j, !textcolor);
 	}
 	updateBoundingBox(x, y, x+5, y + 8);
 }
 
-void LCDwrite(uint8_t c)
-{
-	if (c == '\n')
-	{
+void LCDwrite(uint8_t c) {
+	if (c == '\n'){
 		cursor_y += textsize*8;
 		cursor_x = 0;
-	}
-	else if (c == '\r')
-	{
+	}	else if (c == '\r')	{
 		// skip em
-	}
-	else
-	{
+	}	else {
 		LCDdrawchar(cursor_x, cursor_y, c);
 		cursor_x += textsize*6;
-		if (cursor_x >= (LCDWIDTH-5))
-		{
+		if (cursor_x >= (LCDWIDTH-5))	{
 			cursor_x = 0;
 			cursor_y+=8;
 		}
-		if (cursor_y >= LCDHEIGHT)
+		if (cursor_y >= LCDHEIGHT) {
 			cursor_y = 0;
+    }
 	}
 }
 
-void LCDsetCursor(uint8_t x, uint8_t y)
-{
+void LCDsetCursor(uint8_t x, uint8_t y) {
 	cursor_x = x;
 	cursor_y = y;
 }
 
 // bresenham's algorithm - thx wikpedia
-void LCDdrawline(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color)
-{
+void LCDdrawline(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color) {
 	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
-	if (steep)
-	{
+	if (steep) {
 		swap(x0, y0);
 		swap(x1, y1);
 	}
 
-	if (x0 > x1)
-	{
+	if (x0 > x1) {
 		swap(x0, x1);
 		swap(y0, y1);
 	}
@@ -566,27 +546,20 @@ void LCDdrawline(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color)
 	int8_t err = dx / 2;
 	int8_t ystep;
 
-	if (y0 < y1)
-	{
+	if (y0 < y1) {
 		ystep = 1;
-	} else
-	{
+	} else {
 		ystep = -1;
 	}
 
-	for (; x0<=x1; x0++)
-	{
-		if (steep)
-		{
+	for (; x0<=x1; x0++) {
+		if (steep) {
 			my_setpixel(y0, x0, color);
-		}
-		else
-		{
+		}	else {
 			my_setpixel(x0, y0, color);
 		}
 		err -= dy;
-		if (err < 0)
-		{
+		if (err < 0) {
 			y0 += ystep;
 			err += dx;
 		}
@@ -594,14 +567,11 @@ void LCDdrawline(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color)
 }
 
 // filled rectangle
-void LCDfillrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,  uint8_t color)
-{
+void LCDfillrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,  uint8_t color) {
 	// stupidest version - just pixels - but fast with internal buffer!
 	uint8_t i,j;
-	for ( i=x; i<x+w; i++)
-	{
-		for ( j=y; j<y+h; j++)
-		{
+	for ( i=x; i<x+w; i++) {
+		for ( j=y; j<y+h; j++) {		
 			my_setpixel(i, j, color);
 		}
 	}
@@ -609,8 +579,7 @@ void LCDfillrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,  uint8_t color)
 }
 
 // draw a rectangle
-void LCDdrawrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
-{
+void LCDdrawrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color) {
 	// stupidest version - just pixels - but fast with internal buffer!
 	uint8_t i;
 	for ( i=x; i<x+w; i++) {
@@ -626,8 +595,7 @@ void LCDdrawrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
 }
 
 // draw a circle outline
-void LCDdrawcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
-{
+void LCDdrawcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color) {
 	updateBoundingBox(x0-r, y0-r, x0+r, y0+r);
 
 	int8_t f = 1 - r;
@@ -641,10 +609,8 @@ void LCDdrawcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
 	my_setpixel(x0+r, y0, color);
 	my_setpixel(x0-r, y0, color);
 
-	while (x<y)
-	{
-		if (f >= 0)
-		{
+	while (x<y)	{
+		if (f >= 0)	{
 			y--;
 			ddF_y += 2;
 			f += ddF_y;
@@ -666,8 +632,7 @@ void LCDdrawcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
 	}
 }
 
-void LCDfillcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
-{
+void LCDfillcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color) {
 	updateBoundingBox(x0-r, y0-r, x0+r, y0+r);
 	int8_t f = 1 - r;
 	int8_t ddF_x = 1;
@@ -676,15 +641,12 @@ void LCDfillcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
 	int8_t y = r;
 	uint8_t i;
 
-	for (i=y0-r; i<=y0+r; i++)
-	{
+	for (i=y0-r; i<=y0+r; i++) {
 		my_setpixel(x0, i, color);
 	}
 
-	while (x<y)
-	{
-		if (f >= 0)
-		{
+	while (x<y)	{
+		if (f >= 0)	{
 			y--;
 			ddF_y += 2;
 			f += ddF_y;
@@ -693,8 +655,7 @@ void LCDfillcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
 		ddF_x += 2;
 		f += ddF_x;
 
-		for ( i=y0-y; i<=y0+y; i++)
-		{
+		for ( i=y0-y; i<=y0+y; i++)	{
 			my_setpixel(x0+x, i, color);
 			my_setpixel(x0-x, i, color);
 		}
@@ -707,53 +668,47 @@ void LCDfillcircle(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color)
 }
 
 // the most basic function, set a single pixel
-void LCDsetPixel(uint8_t x, uint8_t y, uint8_t color)
-{
-	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
+void LCDsetPixel(uint8_t x, uint8_t y, uint8_t color) {
+	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT)) {
 		return;
+  }
 
 	// x is which column
-	if (color)
+	if (color) {
 		pcd8544_buffer[x+ (y/8)*LCDWIDTH] |= _BV(y%8);
-	else
+  } else {
 		pcd8544_buffer[x+ (y/8)*LCDWIDTH] &= ~_BV(y%8);
+  }
 	updateBoundingBox(x,y,x,y);
 }
 
 // the most basic function, get a single pixel
-uint8_t LCDgetPixel(uint8_t x, uint8_t y)
-{
-	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT))
+uint8_t LCDgetPixel(uint8_t x, uint8_t y) {
+	if ((x >= LCDWIDTH) || (y >= LCDHEIGHT)) {
 		return 0;
-
+  }
 	return (pcd8544_buffer[x+ (y/8)*LCDWIDTH] >> (7-(y%8))) & 0x1;
 }
 
-void LCDspiwrite(uint8_t c)
-{
+void LCDspiwrite(uint8_t c) {
 	digitalWrite(_cs, LOW);  //bugfix
 
 	shiftOut(_din, _sclk, MSBFIRST, c);
 
 	digitalWrite(_cs, HIGH); //bugfix
-
-
 }
 
-void LCDcommand(uint8_t c)
-{
+void LCDcommand(uint8_t c) {
 	digitalWrite( _dc, LOW);
 	LCDspiwrite(c);
 }
 
-void LCDdata(uint8_t c)
-{
+void LCDdata(uint8_t c) {
 	digitalWrite(_dc, HIGH);
 	LCDspiwrite(c);
 }
 
-void LCDsetContrast(uint8_t val)
-{
+void LCDsetContrast(uint8_t val) {
 	if (val > 0x7f) {
 		val = 0x7f;
 	}
@@ -762,20 +717,16 @@ void LCDsetContrast(uint8_t val)
 	LCDcommand(PCD8544_FUNCTIONSET);
 }
 
-void LCDdisplay(void)
-{
+void LCDdisplay(void) {
 	uint8_t col, maxcol, p;
 
-	for(p = 0; p < 6; p++)
-	{
+	for(p = 0; p < 6; p++) {
 #ifdef enablePartialUpdate
 		// check if this page is part of update
-		if ( yUpdateMin >= ((p+1)*8) )
-		{
+		if ( yUpdateMin >= ((p+1)*8) ) {
 			continue;   // nope, skip it!
 		}
-		if (yUpdateMax < p*8)
-		{
+		if (yUpdateMax < p*8)	{
 			break;
 		}
 #endif
@@ -815,24 +766,25 @@ void LCDdisplay(void)
 void LCDclear(void) {
 	//memset(pcd8544_buffer, 0, LCDWIDTH*LCDHEIGHT/8);
 	uint32_t i;
-	for ( i = 0; i < LCDWIDTH*LCDHEIGHT/8 ; i++)
+	for ( i = 0; i < LCDWIDTH*LCDHEIGHT/8 ; i++) {
 		pcd8544_buffer[i] = 0;
+  }
 	updateBoundingBox(0, 0, LCDWIDTH-1, LCDHEIGHT-1);
 	cursor_y = cursor_x = 0;
 }
 
 // bitbang serial shift out on select GPIO pin. Data rate is defined by CPU clk speed and CLKCONST_2. 
 // Calibrate these value for your need on target platform.
-void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
-{
+void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val) {
 	uint8_t i;
 	uint32_t j;
 
-	for (i = 0; i < 8; i++)  {
-		if (bitOrder == LSBFIRST)
+	for (i = 0; i < 8; i++) {
+		if (bitOrder == LSBFIRST) {
 			digitalWrite(dataPin, !!(val & (1 << i)));
-		else
+    }	else {
 			digitalWrite(dataPin, !!(val & (1 << (7 - i))));
+    }
 
 		digitalWrite(clockPin, HIGH);
 		// LCD Max CLK input: 4MHz
